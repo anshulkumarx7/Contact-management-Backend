@@ -18,6 +18,7 @@ const errorHandler = (err, req, res, next) => {
             res.json({ title: "Server Error", message: err.message, stackTrace: err.stack });
             break;
         default:
+            res.status(500).json({ title: "Server Error", message: err.message, stackTrace: err.stack })
             break;
     }
 };
