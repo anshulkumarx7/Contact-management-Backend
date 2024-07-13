@@ -6,7 +6,7 @@ const Contact = require("../models/contactModel");
 //@access public
 const getContacts = async (req, res, next) => {
     try {
-        const contacts = await Contact.find();
+        const contacts = await Contact.find({user_id:req.user.id});
         res.status(200).json(contacts);
     } catch (err) {
         next(err);
@@ -21,6 +21,10 @@ const getContact = async (req, res, next) => {
         if (!contact) {
             res.status(404);
             throw new Error("Contact not Found");
+        }
+        if(contact.user_id.toString()!=req.user.id){
+            res.status(403);
+            throw new Error("User can't have permission to see other user contact");
         }
         res.status(200).json(contact);
     }
@@ -37,6 +41,10 @@ const updateContact = async (req, res, next) => {
         if (!contact) {
             res.status(404);
             throw new Error("Contact not Found");
+        }
+        if(contact.user_id.toString()!=req.user.id){
+            res.status(403);
+            throw new Error("User can't have permission to update other user contact");
         }
         const updatedContact = await Contact.findByIdAndUpdate(
             req.params.id,
@@ -66,6 +74,7 @@ const createContact = async (req, res, next) => {
             name,
             email,
             phone,
+            user_id:req.user.id
         });
         res.status(201).json(contact);
     } catch (err) {
@@ -82,6 +91,10 @@ const deleteContact = async (req, res, next) => {
         if (!contact) {
             res.status(404);
             throw new Error("Contact not Found");
+        }
+        if(contact.user_id.toString()!=req.user.id){
+            res.status(403);
+            throw new Error("User can't have permission to delete other user contact");
         }
         await Contact.findByIdAndDelete(req.params.id);
         res.status(200).json(contact);

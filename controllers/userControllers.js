@@ -51,7 +51,7 @@ const loginUser = async (req, res, next) => {
                     id: user.id
                 }
             }, process.env.ACCESS_TOKEN_SECRET,
-               {expiresIn:"1m"} 
+               {expiresIn:"15m"} 
             )
             res.status(200).json({
                accessToken
@@ -68,7 +68,7 @@ const loginUser = async (req, res, next) => {
     }
 }
 const currentUser = async (req, res) => {
-    res.json({ message: " Current User" })
+    res.json(req.user);
 }
 
 module.exports = { registerUser, currentUser, loginUser };
